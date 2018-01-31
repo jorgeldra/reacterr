@@ -1,0 +1,31 @@
+{
+  "name": "reacter",
+  "version": "1.0.0",
+  "description": "clon de twitter con react",
+  "main": "/build/app.js",
+  "scripts": {
+    "build": "webpack --colors",
+    "serve": "webpack-dev-server --content-base build/ --colors --progress",
+    "start": "npm run build & npm run serve"
+  },
+  "author": "Jorge Diaz",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-latest": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.9",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "html-webpack-plugin": "^2.30.1",
+    "style-loader": "^0.20.1",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "dependencies": {
+    "moment": "^2.20.1",
+    "normalize-css": "^2.3.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  }
+}

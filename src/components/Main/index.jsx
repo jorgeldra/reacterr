@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import MessageList from '../MessageList';
 import ProfileBar from '../ProfileBar';
 import InputText from '../InputText';
+import uuid from 'uuid';
 
 class Main extends Component{
     constructor(){
@@ -10,21 +11,53 @@ class Main extends Component{
             openText: false,
             messages : [
                 {
+                    id: uuid.v4(),
                     text : "Mensaje del tweet",
                     picture : "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
                     displayName : "Jorge Diaz",
                     userName : "JorgeDiaz",
-                    date : Date.now()-180000
+                    date : Date.now()-180000,
+                    retweets: 0,
+                    favorites: 0
                 },
                 {
+                    id: uuid.v4(),
                     text : "Este es un nuevo mensaje",
                     picture : "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
                     displayName : "Jorge Diaz",
                     userName : "JorgeDiaz",
-                    date : Date.now()-1800000
+                    date : Date.now()-1800000,
+                    retweets: 0,
+                    favorites: 0
                 }
             ]
         }
+
+        this.handleSendText = this.handleSendText.bind(this);
+        this.handleCloseText = this.handleCloseText.bind(this);
+        this.handleOpentText = this.handleOpentText.bind(this);
+    }
+
+    handleSendText(event){
+        event.preventDefault();
+        let newMessage = {
+            id: uuid.v4(),
+            userName: this.props.user.email.split('@')[0],
+            displayName: this.props.user.displayName,
+            date: Date.now(),
+            text: event.target.text.value,
+            picture: this.props.user.photoURL
+        }
+
+        this.setState({
+            messages: this.state.messages.concat(newMessage),
+            openText: false
+        })
+    }
+
+    handleCloseText(event){
+        event.preventDefault();
+        this.setState({openText: false})
     }
 
     handleOpentText(event){
@@ -32,9 +65,22 @@ class Main extends Component{
         this.setState({openText: true})
     }
 
+    handleRetweet(){
+
+    }
+
+    handleFavorite(){
+
+    }
+
     renderOpenText(){
         if(this.state.openText){
-            return <InputText />;
+            return (
+                <InputText 
+                    onSendText={this.handleSendText}
+                    onCloseText={this.handleCloseText}
+                />
+            ) 
         }
     }
     render(){
@@ -46,7 +92,11 @@ class Main extends Component{
                     onOpenText={this.handleOpentText}
                 />
                 {this.renderOpenText()}
-                <MessageList messages={this.state.messages} />
+                <MessageList 
+                    messages={this.state.messages} 
+                    onRetweet={this.handleRetweet}
+                    onFavorite={this.handleFavorite}
+                />
             </div>
         )
     }

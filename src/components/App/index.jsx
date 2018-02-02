@@ -11,7 +11,8 @@ class App extends Component{
             user:{
                 photoURL : 'https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png',
                 email: 'jorgeldra@gmail.com',
-                onOpenText: false
+                onOpenText: false,
+                displayName:'Jorge Diaz'
             }
         }
     }

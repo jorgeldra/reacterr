@@ -8,7 +8,7 @@ class ProfileBar extends Component{
 
     render(){
         return (
-            <div className="{styles.root}">
+            <div className={styles.root}>
                 <figure>
                     <img className={styles.avatar} src={this.props.picture} />
                 </figure>

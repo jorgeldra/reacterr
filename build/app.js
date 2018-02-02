@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 136);
+/******/ 	return __webpack_require__(__webpack_require__.s = 138);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1911,7 +1911,7 @@ function loadLocale(name) {
         try {
             oldLocale = globalLocale._abbr;
             var aliasedRequire = require;
-            __webpack_require__(166)("./" + name);
+            __webpack_require__(168)("./" + name);
             getSetGlobalLocale(oldLocale);
         } catch (e) {}
     }
@@ -4603,7 +4603,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(165)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(167)(module)))
 
 /***/ }),
 /* 1 */
@@ -4613,9 +4613,9 @@ return hooks;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports = __webpack_require__(138);
+  module.exports = __webpack_require__(140);
 } else {
-  module.exports = __webpack_require__(139);
+  module.exports = __webpack_require__(141);
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
@@ -5001,7 +5001,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(156);
+var	fixUrls = __webpack_require__(158);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -5583,7 +5583,7 @@ module.exports = warning;
 if (process.env.NODE_ENV !== 'production') {
   var invariant = __webpack_require__(8);
   var warning = __webpack_require__(9);
-  var ReactPropTypesSecret = __webpack_require__(140);
+  var ReactPropTypesSecret = __webpack_require__(142);
   var loggedTypeFailures = {};
 }
 
@@ -5882,7 +5882,7 @@ module.exports = shallowEqual;
  * 
  */
 
-var isTextNode = __webpack_require__(143);
+var isTextNode = __webpack_require__(145);
 
 /*eslint-disable no-bitwise */
 
@@ -17602,13 +17602,80 @@ return zhTw;
 
 /***/ }),
 /* 136 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__(137);
+// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+
+// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && msCrypto.getRandomValues.bind(msCrypto));
+if (getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
+    return rnds8;
+  };
+} else {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
+}
 
 
 /***/ }),
 /* 137 */
+/***/ (function(module, exports) {
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
+}
+
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
+  return bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] + '-' +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]] +
+          bth[buf[i++]] + bth[buf[i++]];
+}
+
+module.exports = bytesToUuid;
+
+
+/***/ }),
+/* 138 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(139);
+
+
+/***/ }),
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17618,9 +17685,9 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(141);
+var _reactDom = __webpack_require__(143);
 
-var _App = __webpack_require__(150);
+var _App = __webpack_require__(152);
 
 var _App2 = _interopRequireDefault(_App);
 
@@ -17629,7 +17696,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 (0, _reactDom.render)(_react2.default.createElement(_App2.default, null), document.getElementById('root'));
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17657,7 +17724,7 @@ isValidElement:K,version:"16.2.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_F
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19022,7 +19089,7 @@ module.exports = react;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19041,7 +19108,7 @@ module.exports = ReactPropTypesSecret;
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19079,15 +19146,15 @@ if (process.env.NODE_ENV === 'production') {
   // DCE check should happen before ReactDOM bundle executes so that
   // DevTools can report bad minification during injection.
   checkDCE();
-  module.exports = __webpack_require__(142);
+  module.exports = __webpack_require__(144);
 } else {
-  module.exports = __webpack_require__(145);
+  module.exports = __webpack_require__(147);
 }
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19323,7 +19390,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19338,7 +19405,7 @@ Z.injectIntoDevTools({findFiberByHostInstance:pb,bundleType:0,version:"16.2.0",r
  * @typechecks
  */
 
-var isNode = __webpack_require__(144);
+var isNode = __webpack_require__(146);
 
 /**
  * @param {*} object The object to check.
@@ -19351,7 +19418,7 @@ function isTextNode(object) {
 module.exports = isTextNode;
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19379,7 +19446,7 @@ function isNode(object) {
 module.exports = isNode;
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19413,8 +19480,8 @@ var containsNode = __webpack_require__(15);
 var focusNode = __webpack_require__(16);
 var emptyObject = __webpack_require__(7);
 var checkPropTypes = __webpack_require__(10);
-var hyphenateStyleName = __webpack_require__(146);
-var camelizeStyleName = __webpack_require__(148);
+var hyphenateStyleName = __webpack_require__(148);
+var camelizeStyleName = __webpack_require__(150);
 
 /**
  * WARNING: DO NOT manually require this module.
@@ -34781,7 +34848,7 @@ module.exports = reactDom;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34796,7 +34863,7 @@ module.exports = reactDom;
 
 
 
-var hyphenate = __webpack_require__(147);
+var hyphenate = __webpack_require__(149);
 
 var msPattern = /^ms-/;
 
@@ -34823,7 +34890,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34859,7 +34926,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34874,7 +34941,7 @@ module.exports = hyphenate;
 
 
 
-var camelize = __webpack_require__(149);
+var camelize = __webpack_require__(151);
 
 var msPattern = /^-ms-/;
 
@@ -34902,7 +34969,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34937,7 +35004,7 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34953,17 +35020,17 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-__webpack_require__(151);
+__webpack_require__(153);
 
-var _app = __webpack_require__(154);
+var _app = __webpack_require__(156);
 
 var _app2 = _interopRequireDefault(_app);
 
-var _Header = __webpack_require__(157);
+var _Header = __webpack_require__(159);
 
 var _Header2 = _interopRequireDefault(_Header);
 
-var _Main = __webpack_require__(160);
+var _Main = __webpack_require__(162);
 
 var _Main2 = _interopRequireDefault(_Main);
 
@@ -35013,17 +35080,17 @@ var App = function (_Component) {
 exports.default = App;
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var insert = __webpack_require__(152);
-var normalize = __webpack_require__(153);
+var insert = __webpack_require__(154);
+var normalize = __webpack_require__(155);
 
 insert(normalize);
 
 
 /***/ }),
-/* 152 */
+/* 154 */
 /***/ (function(module, exports) {
 
 var inserted = [];
@@ -35046,18 +35113,18 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 153 */
+/* 155 */
 /***/ (function(module, exports) {
 
 module.exports = "/*! normalize.css v2.1.3 | MIT License | git.io/normalize */\n\n/* ==========================================================================\n   HTML5 display definitions\n   ========================================================================== */\n\n/**\n * Correct `block` display not defined in IE 8/9.\n */\n\narticle,\naside,\ndetails,\nfigcaption,\nfigure,\nfooter,\nheader,\nhgroup,\nmain,\nnav,\nsection,\nsummary {\n    display: block;\n}\n\n/**\n * Correct `inline-block` display not defined in IE 8/9.\n */\n\naudio,\ncanvas,\nvideo {\n    display: inline-block;\n}\n\n/**\n * Prevent modern browsers from displaying `audio` without controls.\n * Remove excess height in iOS 5 devices.\n */\n\naudio:not([controls]) {\n    display: none;\n    height: 0;\n}\n\n/**\n * Address `[hidden]` styling not present in IE 8/9.\n * Hide the `template` element in IE, Safari, and Firefox < 22.\n */\n\n[hidden],\ntemplate {\n    display: none;\n}\n\n/* ==========================================================================\n   Base\n   ========================================================================== */\n\n/**\n * 1. Set default font family to sans-serif.\n * 2. Prevent iOS text size adjust after orientation change, without disabling\n *    user zoom.\n */\n\nhtml {\n    font-family: sans-serif; /* 1 */\n    -ms-text-size-adjust: 100%; /* 2 */\n    -webkit-text-size-adjust: 100%; /* 2 */\n}\n\n/**\n * Remove default margin.\n */\n\nbody {\n    margin: 0;\n}\n\n/* ==========================================================================\n   Links\n   ========================================================================== */\n\n/**\n * Remove the gray background color from active links in IE 10.\n */\n\na {\n    background: transparent;\n}\n\n/**\n * Address `outline` inconsistency between Chrome and other browsers.\n */\n\na:focus {\n    outline: thin dotted;\n}\n\n/**\n * Improve readability when focused and also mouse hovered in all browsers.\n */\n\na:active,\na:hover {\n    outline: 0;\n}\n\n/* ==========================================================================\n   Typography\n   ========================================================================== */\n\n/**\n * Address variable `h1` font-size and margin within `section` and `article`\n * contexts in Firefox 4+, Safari 5, and Chrome.\n */\n\nh1 {\n    font-size: 2em;\n    margin: 0.67em 0;\n}\n\n/**\n * Address styling not present in IE 8/9, Safari 5, and Chrome.\n */\n\nabbr[title] {\n    border-bottom: 1px dotted;\n}\n\n/**\n * Address style set to `bolder` in Firefox 4+, Safari 5, and Chrome.\n */\n\nb,\nstrong {\n    font-weight: bold;\n}\n\n/**\n * Address styling not present in Safari 5 and Chrome.\n */\n\ndfn {\n    font-style: italic;\n}\n\n/**\n * Address differences between Firefox and other browsers.\n */\n\nhr {\n    -moz-box-sizing: content-box;\n    box-sizing: content-box;\n    height: 0;\n}\n\n/**\n * Address styling not present in IE 8/9.\n */\n\nmark {\n    background: #ff0;\n    color: #000;\n}\n\n/**\n * Correct font family set oddly in Safari 5 and Chrome.\n */\n\ncode,\nkbd,\npre,\nsamp {\n    font-family: monospace, serif;\n    font-size: 1em;\n}\n\n/**\n * Improve readability of pre-formatted text in all browsers.\n */\n\npre {\n    white-space: pre-wrap;\n}\n\n/**\n * Set consistent quote types.\n */\n\nq {\n    quotes: \"\\201C\" \"\\201D\" \"\\2018\" \"\\2019\";\n}\n\n/**\n * Address inconsistent and variable font size in all browsers.\n */\n\nsmall {\n    font-size: 80%;\n}\n\n/**\n * Prevent `sub` and `sup` affecting `line-height` in all browsers.\n */\n\nsub,\nsup {\n    font-size: 75%;\n    line-height: 0;\n    position: relative;\n    vertical-align: baseline;\n}\n\nsup {\n    top: -0.5em;\n}\n\nsub {\n    bottom: -0.25em;\n}\n\n/* ==========================================================================\n   Embedded content\n   ========================================================================== */\n\n/**\n * Remove border when inside `a` element in IE 8/9.\n */\n\nimg {\n    border: 0;\n}\n\n/**\n * Correct overflow displayed oddly in IE 9.\n */\n\nsvg:not(:root) {\n    overflow: hidden;\n}\n\n/* ==========================================================================\n   Figures\n   ========================================================================== */\n\n/**\n * Address margin not present in IE 8/9 and Safari 5.\n */\n\nfigure {\n    margin: 0;\n}\n\n/* ==========================================================================\n   Forms\n   ========================================================================== */\n\n/**\n * Define consistent border, margin, and padding.\n */\n\nfieldset {\n    border: 1px solid #c0c0c0;\n    margin: 0 2px;\n    padding: 0.35em 0.625em 0.75em;\n}\n\n/**\n * 1. Correct `color` not being inherited in IE 8/9.\n * 2. Remove padding so people aren't caught out if they zero out fieldsets.\n */\n\nlegend {\n    border: 0; /* 1 */\n    padding: 0; /* 2 */\n}\n\n/**\n * 1. Correct font family not being inherited in all browsers.\n * 2. Correct font size not being inherited in all browsers.\n * 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome.\n */\n\nbutton,\ninput,\nselect,\ntextarea {\n    font-family: inherit; /* 1 */\n    font-size: 100%; /* 2 */\n    margin: 0; /* 3 */\n}\n\n/**\n * Address Firefox 4+ setting `line-height` on `input` using `!important` in\n * the UA stylesheet.\n */\n\nbutton,\ninput {\n    line-height: normal;\n}\n\n/**\n * Address inconsistent `text-transform` inheritance for `button` and `select`.\n * All other form control elements do not inherit `text-transform` values.\n * Correct `button` style inheritance in Chrome, Safari 5+, and IE 8+.\n * Correct `select` style inheritance in Firefox 4+ and Opera.\n */\n\nbutton,\nselect {\n    text-transform: none;\n}\n\n/**\n * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`\n *    and `video` controls.\n * 2. Correct inability to style clickable `input` types in iOS.\n * 3. Improve usability and consistency of cursor style between image-type\n *    `input` and others.\n */\n\nbutton,\nhtml input[type=\"button\"], /* 1 */\ninput[type=\"reset\"],\ninput[type=\"submit\"] {\n    -webkit-appearance: button; /* 2 */\n    cursor: pointer; /* 3 */\n}\n\n/**\n * Re-set default cursor for disabled elements.\n */\n\nbutton[disabled],\nhtml input[disabled] {\n    cursor: default;\n}\n\n/**\n * 1. Address box sizing set to `content-box` in IE 8/9/10.\n * 2. Remove excess padding in IE 8/9/10.\n */\n\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n    box-sizing: border-box; /* 1 */\n    padding: 0; /* 2 */\n}\n\n/**\n * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.\n * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome\n *    (include `-moz` to future-proof).\n */\n\ninput[type=\"search\"] {\n    -webkit-appearance: textfield; /* 1 */\n    -moz-box-sizing: content-box;\n    -webkit-box-sizing: content-box; /* 2 */\n    box-sizing: content-box;\n}\n\n/**\n * Remove inner padding and search cancel button in Safari 5 and Chrome\n * on OS X.\n */\n\ninput[type=\"search\"]::-webkit-search-cancel-button,\ninput[type=\"search\"]::-webkit-search-decoration {\n    -webkit-appearance: none;\n}\n\n/**\n * Remove inner padding and border in Firefox 4+.\n */\n\nbutton::-moz-focus-inner,\ninput::-moz-focus-inner {\n    border: 0;\n    padding: 0;\n}\n\n/**\n * 1. Remove default vertical scrollbar in IE 8/9.\n * 2. Improve readability and alignment in all browsers.\n */\n\ntextarea {\n    overflow: auto; /* 1 */\n    vertical-align: top; /* 2 */\n}\n\n/* ==========================================================================\n   Tables\n   ========================================================================== */\n\n/**\n * Remove most spacing between table cells.\n */\n\ntable {\n    border-collapse: collapse;\n    border-spacing: 0;\n}\n"
 
 
 /***/ }),
-/* 154 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(155);
+var content = __webpack_require__(157);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -35103,7 +35170,7 @@ if(false) {
 }
 
 /***/ }),
-/* 155 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -35117,7 +35184,7 @@ exports.push([module.i, "body{\r\n    margin: 0 auto;\r\n    background-color: #
 
 
 /***/ }),
-/* 156 */
+/* 158 */
 /***/ (function(module, exports) {
 
 
@@ -35212,7 +35279,7 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 157 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35228,7 +35295,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _header = __webpack_require__(158);
+var _header = __webpack_require__(160);
 
 var _header2 = _interopRequireDefault(_header);
 
@@ -35270,11 +35337,11 @@ var Header = function (_Component) {
 exports.default = Header;
 
 /***/ }),
-/* 158 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(159);
+var content = __webpack_require__(161);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -35320,7 +35387,7 @@ if(false) {
 }
 
 /***/ }),
-/* 159 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -35337,7 +35404,7 @@ exports.locals = {
 };
 
 /***/ }),
-/* 160 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35353,17 +35420,21 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _MessageList = __webpack_require__(161);
+var _MessageList = __webpack_require__(163);
 
 var _MessageList2 = _interopRequireDefault(_MessageList);
 
-var _ProfileBar = __webpack_require__(169);
+var _ProfileBar = __webpack_require__(171);
 
 var _ProfileBar2 = _interopRequireDefault(_ProfileBar);
 
-var _InputText = __webpack_require__(172);
+var _InputText = __webpack_require__(174);
 
 var _InputText2 = _interopRequireDefault(_InputText);
+
+var _uuid = __webpack_require__(177);
+
+var _uuid2 = _interopRequireDefault(_uuid);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -35384,12 +35455,14 @@ var Main = function (_Component) {
         _this.state = {
             openText: false,
             messages: [{
+                id: _uuid2.default.v4(),
                 text: "Mensaje del tweet",
                 picture: "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
                 displayName: "Jorge Diaz",
                 userName: "JorgeDiaz",
                 date: Date.now() - 180000
             }, {
+                id: _uuid2.default.v4(),
                 text: "Este es un nuevo mensaje",
                 picture: "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
                 displayName: "Jorge Diaz",
@@ -35397,10 +35470,24 @@ var Main = function (_Component) {
                 date: Date.now() - 1800000
             }]
         };
+
+        _this.handleSendText = _this.handleSendText.bind(_this);
+        _this.handleCloseText = _this.handleCloseText.bind(_this);
+        _this.handleOpentText = _this.handleOpentText.bind(_this);
         return _this;
     }
 
     _createClass(Main, [{
+        key: 'handleSendText',
+        value: function handleSendText(event) {
+            event.preventDefault();
+        }
+    }, {
+        key: 'handleCloseText',
+        value: function handleCloseText(event) {
+            event.preventDefault();
+        }
+    }, {
         key: 'handleOpentText',
         value: function handleOpentText(event) {
             event.preventDefault();
@@ -35410,7 +35497,10 @@ var Main = function (_Component) {
         key: 'renderOpenText',
         value: function renderOpenText() {
             if (this.state.openText) {
-                return _react2.default.createElement(_InputText2.default, null);
+                return _react2.default.createElement(_InputText2.default, {
+                    onSendText: this.handleSendText,
+                    onCloseText: this.handleCloseText
+                });
             }
         }
     }, {
@@ -35436,7 +35526,7 @@ var Main = function (_Component) {
 exports.default = Main;
 
 /***/ }),
-/* 161 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35452,11 +35542,11 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Message = __webpack_require__(162);
+var _Message = __webpack_require__(164);
 
 var _Message2 = _interopRequireDefault(_Message);
 
-var _messageList = __webpack_require__(167);
+var _messageList = __webpack_require__(169);
 
 var _messageList2 = _interopRequireDefault(_messageList);
 
@@ -35485,6 +35575,7 @@ var MessageList = function (_Component) {
                 { className: _messageList2.default.root },
                 this.props.messages.map(function (msg) {
                     return _react2.default.createElement(_Message2.default, {
+                        key: msg.id,
                         text: msg.text,
                         picture: msg.picture,
                         displayName: msg.displayName,
@@ -35502,7 +35593,7 @@ var MessageList = function (_Component) {
 exports.default = MessageList;
 
 /***/ }),
-/* 162 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35518,7 +35609,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _messages = __webpack_require__(163);
+var _messages = __webpack_require__(165);
 
 var _messages2 = _interopRequireDefault(_messages);
 
@@ -35609,11 +35700,11 @@ var Message = function (_Component) {
 exports.default = Message;
 
 /***/ }),
-/* 163 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(164);
+var content = __webpack_require__(166);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -35659,7 +35750,7 @@ if(false) {
 }
 
 /***/ }),
-/* 164 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -35683,7 +35774,7 @@ exports.locals = {
 };
 
 /***/ }),
-/* 165 */
+/* 167 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -35711,7 +35802,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 166 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -35968,14 +36059,14 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 166;
+webpackContext.id = 168;
 
 /***/ }),
-/* 167 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(168);
+var content = __webpack_require__(170);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -36021,7 +36112,7 @@ if(false) {
 }
 
 /***/ }),
-/* 168 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -36037,7 +36128,7 @@ exports.locals = {
 };
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36053,7 +36144,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _profilebar = __webpack_require__(170);
+var _profilebar = __webpack_require__(172);
 
 var _profilebar2 = _interopRequireDefault(_profilebar);
 
@@ -36079,7 +36170,7 @@ var ProfileBar = function (_Component) {
         value: function render() {
             return _react2.default.createElement(
                 'div',
-                { className: '{styles.root}' },
+                { className: _profilebar2.default.root },
                 _react2.default.createElement(
                     'figure',
                     null,
@@ -36107,11 +36198,11 @@ var ProfileBar = function (_Component) {
 exports.default = ProfileBar;
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(171);
+var content = __webpack_require__(173);
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -36157,7 +36248,7 @@ if(false) {
 }
 
 /***/ }),
-/* 171 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(4)(false);
@@ -36165,13 +36256,18 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".profilebar__root__3_pJq{\r\n    display: flex;\r\n    margin :1em;\r\n    align-items: center;\r\n}\r\n\r\n.profilebar__avatar__2UD_M{\r\n    border-radius:50%;\r\n    width:32px;\r\n    height:32px;\r\n}\r\n\r\n.profilebar__username__eH25S{\r\n    color:#666;\r\n    padding: 0.5em 0.75em;\r\n}\r\n\r\n.profilebar__button__3L0tI{\r\n    background-color: #2d84cc;\r\n    color: #fff;\r\n    border: 1px solid #1f6fb1;\r\n    border-radius: 5px;\r\n    padding: 0.5em 0.75em;\r\n}", ""]);
 
 // exports
-
+exports.locals = {
+	"root": "profilebar__root__3_pJq",
+	"avatar": "profilebar__avatar__2UD_M",
+	"username": "profilebar__username__eH25S",
+	"button": "profilebar__button__3L0tI"
+};
 
 /***/ }),
-/* 172 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36186,6 +36282,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
+
+var _inputText = __webpack_require__(175);
+
+var _inputText2 = _interopRequireDefault(_inputText);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -36207,7 +36307,25 @@ var InputText = function (_Component) {
     _createClass(InputText, [{
         key: 'render',
         value: function render() {
-            return _react2.default.createElement('div', null);
+            return _react2.default.createElement(
+                'form',
+                { className: _inputText2.default.form, onSubmit: this.props.onSendText },
+                _react2.default.createElement('textarea', { className: _inputText2.default.text, name: 'text' }),
+                _react2.default.createElement(
+                    'div',
+                    { className: _inputText2.default.buttons },
+                    _react2.default.createElement(
+                        'button',
+                        { className: _inputText2.default.close, onClick: this.props.onCloseText },
+                        'Cerrar'
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: _inputText2.default.send, type: 'submit' },
+                        'Enviar'
+                    )
+                )
+            );
         }
     }]);
 
@@ -36215,6 +36333,239 @@ var InputText = function (_Component) {
 }(_react.Component);
 
 exports.default = InputText;
+
+/***/ }),
+/* 175 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(176);
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(5)(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../node_modules/css-loader/index.js?modules&importLoaders=1&localIdentName=[name]__[local]__[hash:base64:5]!./input-text.css", function() {
+		var newContent = require("!!../../../node_modules/css-loader/index.js?modules&importLoaders=1&localIdentName=[name]__[local]__[hash:base64:5]!./input-text.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 176 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".input-text__text__1q46U{\r\n    border-radius: 5px;\r\n    border: 1px solid #ddd;\r\n    width: 90%;\r\n    height: 5em;\r\n    padding: 0.75em;\r\n    margin: 1em 0.5em;\r\n}\r\n\r\n.input-text__buttons__YwEWi{\r\n    display: flex;\r\n    justify-content: flex-end;\r\n}\r\n\r\n.input-text__buttons__YwEWi > button{\r\n    border-radius: 5px;\r\n    padding: 0.5em 0.75em;\r\n    margin: 0.25em;\r\n}\r\n\r\n.input-text__close__12W9r{\r\n    background-color: #fff;\r\n    border: 1px solid #ddd;\r\n}\r\n\r\n.input-text__send__3LNLX{\r\n    background-color: #2d84cc;\r\n    border:1px solid #226aa6;\r\n    color: #fff;\r\n}", ""]);
+
+// exports
+exports.locals = {
+	"text": "input-text__text__1q46U",
+	"buttons": "input-text__buttons__YwEWi",
+	"close": "input-text__close__12W9r",
+	"send": "input-text__send__3LNLX"
+};
+
+/***/ }),
+/* 177 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var v1 = __webpack_require__(178);
+var v4 = __webpack_require__(179);
+
+var uuid = v4;
+uuid.v1 = v1;
+uuid.v4 = v4;
+
+module.exports = uuid;
+
+
+/***/ }),
+/* 178 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var rng = __webpack_require__(136);
+var bytesToUuid = __webpack_require__(137);
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+var _nodeId;
+var _clockseq;
+
+// Previous uuid creation time
+var _lastMSecs = 0;
+var _lastNSecs = 0;
+
+// See https://github.com/broofa/node-uuid for API details
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+
+  options = options || {};
+  var node = options.node || _nodeId;
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
+    }
+  }
+
+  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+
+  // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+
+  // Time since last uuid creation (in msecs)
+  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+
+  // Per 4.2.1.2, Bump clockseq on clock regression
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  }
+
+  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  }
+
+  // Per 4.2.1.2 Throw error if too many uuids are requested
+  if (nsecs >= 10000) {
+    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+
+  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+  msecs += 12219292800000;
+
+  // `time_low`
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff;
+
+  // `time_mid`
+  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff;
+
+  // `time_high_and_version`
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+  b[i++] = tmh >>> 16 & 0xff;
+
+  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+  b[i++] = clockseq >>> 8 | 0x80;
+
+  // `clock_seq_low`
+  b[i++] = clockseq & 0xff;
+
+  // `node`
+  for (var n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : bytesToUuid(b);
+}
+
+module.exports = v1;
+
+
+/***/ }),
+/* 179 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var rng = __webpack_require__(136);
+var bytesToUuid = __webpack_require__(137);
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || bytesToUuid(rnds);
+}
+
+module.exports = v4;
+
 
 /***/ })
 /******/ ]);

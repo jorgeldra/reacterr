@@ -35054,7 +35054,8 @@ var App = function (_Component) {
             user: {
                 photoURL: 'https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png',
                 email: 'jorgeldra@gmail.com',
-                onOpenText: false
+                onOpenText: false,
+                displayName: 'Jorge Diaz'
             }
         };
         return _this;
@@ -35460,14 +35461,18 @@ var Main = function (_Component) {
                 picture: "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
                 displayName: "Jorge Diaz",
                 userName: "JorgeDiaz",
-                date: Date.now() - 180000
+                date: Date.now() - 180000,
+                retweets: 0,
+                favorites: 0
             }, {
                 id: _uuid2.default.v4(),
                 text: "Este es un nuevo mensaje",
                 picture: "https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png",
                 displayName: "Jorge Diaz",
                 userName: "JorgeDiaz",
-                date: Date.now() - 1800000
+                date: Date.now() - 1800000,
+                retweets: 0,
+                favorites: 0
             }]
         };
 
@@ -35481,11 +35486,25 @@ var Main = function (_Component) {
         key: 'handleSendText',
         value: function handleSendText(event) {
             event.preventDefault();
+            var newMessage = {
+                id: _uuid2.default.v4(),
+                userName: this.props.user.email.split('@')[0],
+                displayName: this.props.user.displayName,
+                date: Date.now(),
+                text: event.target.text.value,
+                picture: this.props.user.photoURL
+            };
+
+            this.setState({
+                messages: this.state.messages.concat(newMessage),
+                openText: false
+            });
         }
     }, {
         key: 'handleCloseText',
         value: function handleCloseText(event) {
             event.preventDefault();
+            this.setState({ openText: false });
         }
     }, {
         key: 'handleOpentText',
@@ -35493,6 +35512,12 @@ var Main = function (_Component) {
             event.preventDefault();
             this.setState({ openText: true });
         }
+    }, {
+        key: 'handleRetweet',
+        value: function handleRetweet() {}
+    }, {
+        key: 'handleFavorite',
+        value: function handleFavorite() {}
     }, {
         key: 'renderOpenText',
         value: function renderOpenText() {
@@ -35515,7 +35540,11 @@ var Main = function (_Component) {
                     onOpenText: this.handleOpentText
                 }),
                 this.renderOpenText(),
-                _react2.default.createElement(_MessageList2.default, { messages: this.state.messages })
+                _react2.default.createElement(_MessageList2.default, {
+                    messages: this.state.messages,
+                    onRetweet: this.handleRetweet,
+                    onFavorite: this.handleFavorite
+                })
             );
         }
     }]);
@@ -35564,12 +35593,18 @@ var MessageList = function (_Component) {
     function MessageList(props) {
         _classCallCheck(this, MessageList);
 
-        return _possibleConstructorReturn(this, (MessageList.__proto__ || Object.getPrototypeOf(MessageList)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (MessageList.__proto__ || Object.getPrototypeOf(MessageList)).call(this, props));
+
+        _this.onRetweet = _this.onRetweet.bind(_this);
+        _this.onFavorite = _this.onFavorite.bind(_this);
+        return _this;
     }
 
     _createClass(MessageList, [{
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return _react2.default.createElement(
                 'div',
                 { className: _messageList2.default.root },
@@ -35580,9 +35615,17 @@ var MessageList = function (_Component) {
                         picture: msg.picture,
                         displayName: msg.displayName,
                         userName: msg.userName,
-                        date: msg.date
+                        date: msg.date,
+                        numRetweets: msg.retweets,
+                        numFavorites: msg.favorites,
+                        onRetweet: function onRetweet() {
+                            return _this2.props.onRetweet(msg.id);
+                        },
+                        onFavorite: function onFavorite() {
+                            return _this2.props.onFavorite(msg.id);
+                        }
                     });
-                })
+                }).reverse()
             );
         }
     }]);
@@ -35631,10 +35674,35 @@ var Message = function (_Component) {
     function Message(props) {
         _classCallCheck(this, Message);
 
-        return _possibleConstructorReturn(this, (Message.__proto__ || Object.getPrototypeOf(Message)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Message.__proto__ || Object.getPrototypeOf(Message)).call(this, props));
+
+        _this.onPressRetweet = _this.onPressRetweet.bind(_this);
+        _this.onPressFavorite = _this.onPressFavorite.bind(_this);
+
+        _this.state = {
+            pressFavorite: false,
+            pressRetweet: false
+        };
+        return _this;
     }
 
     _createClass(Message, [{
+        key: 'onPressFavorite',
+        value: function onPressFavorite() {
+            this.props.onFavorite();
+            this.setState({
+                pressFavorite: true
+            });
+        }
+    }, {
+        key: 'onPressRetweet',
+        value: function onPressRetweet() {
+            this.props.onRetweet();
+            this.setState({
+                pressRetweet: true
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             var dateFormat = (0, _moment2.default)(this.props.date).fromNow();
@@ -35681,13 +35749,27 @@ var Message = function (_Component) {
                     ),
                     _react2.default.createElement(
                         'div',
-                        { className: _messages2.default.icon },
-                        _react2.default.createElement('span', { className: 'fa fa-retweet' })
+                        {
+                            className: this.state.pressFavorite ? _messages2.default.rtGreen : '',
+                            onClick: this.onPressRetweet },
+                        _react2.default.createElement('span', { className: 'fa fa-retweet' }),
+                        _react2.default.createElement(
+                            'span',
+                            { className: _messages2.default.num },
+                            this.props.numRetweets
+                        )
                     ),
                     _react2.default.createElement(
                         'div',
-                        { className: _messages2.default.icon },
-                        _react2.default.createElement('span', { className: 'fa fa-star' })
+                        {
+                            className: this.state.pressRetweet ? _messages2.default.favYellow : '',
+                            onClick: this.onPressFavorite },
+                        _react2.default.createElement('span', { className: 'fa fa-star' }),
+                        _react2.default.createElement(
+                            'span',
+                            { className: _messages2.default.num },
+                            this.props.numFavorites
+                        )
                     )
                 )
             );
@@ -35758,7 +35840,7 @@ exports = module.exports = __webpack_require__(4)(false);
 
 
 // module
-exports.push([module.i, ".messages__root__QlRTG{\r\n    background-color: #fff;\r\n    border: 1px solidaaa #ccc;\r\n    border-radius: 5px;;\r\n    padding: 1em;\r\n    margin: 0.5em;\r\n}\r\n\r\n.messages__text__OpPln{\r\n    font-size: 16pt;\r\n    font-weight: 200;\r\n}\r\n\r\n.messages__user__1sj5D{\r\n    display: flex;\r\n    align-items: center;\r\n}\r\n\r\n.messages__avatar__1PXK8{\r\n    width: 34px;\r\n    height: 34px;\r\n    border-radius: 50%;\r\n}\r\n\r\n.messages__displayName__2QIkf{\r\n    font-weight: bold;\r\n    padding: 0.5em;\r\n}\r\n\r\n.messages__username__2IXma{\r\n    color: #aaa;\r\n}\r\n\r\n.messages__date__kiPHA{\r\n    color: #aaa;\r\n    padding: 0.5em;\r\n    font-size: 8pt;\r\n}\r\n\r\n.messages__buttons__3szxG{\r\n    display: flex;\r\n    justify-content: flext-start;\r\n    color: #aaa;\r\n}\r\n\r\n.messages__icon__2SEjV{\r\n    margin-right: 3em;\r\n}", ""]);
+exports.push([module.i, ".messages__root__QlRTG{\r\n    background-color: #fff;\r\n    border: 1px solidaaa #ccc;\r\n    border-radius: 5px;;\r\n    padding: 1em;\r\n    margin: 0.5em;\r\n}\r\n\r\n.messages__text__OpPln{\r\n    font-size: 16pt;\r\n    font-weight: 200;\r\n}\r\n\r\n.messages__user__1sj5D{\r\n    display: flex;\r\n    align-items: center;\r\n}\r\n\r\n.messages__avatar__1PXK8{\r\n    width: 34px;\r\n    height: 34px;\r\n    border-radius: 50%;\r\n}\r\n\r\n.messages__displayName__2QIkf{\r\n    font-weight: bold;\r\n    padding: 0.5em;\r\n}\r\n\r\n.messages__username__2IXma{\r\n    color: #aaa;\r\n}\r\n\r\n.messages__date__kiPHA{\r\n    color: #aaa;\r\n    padding: 0.5em;\r\n    font-size: 8pt;\r\n}\r\n\r\n.messages__buttons__3szxG{\r\n    display: flex;\r\n    justify-content: flext-start;\r\n    color: #aaa;\r\n}\r\n\r\n.messages__icon__2SEjV{\r\n    margin-right: 3em;\r\n}\r\n\r\n.messages__num__3UaNI{\r\n    font-size: 10pt;\r\n    margin-right: 3em;\r\n    margin-left: 0.25em;\r\n}\r\n\r\n.messages__rtGreen__39VQI{\r\n    color: #20883f;\r\n}\r\n\r\n.messages__favYellow__1XpjW{\r\n    color: #e2c400;\r\n}", ""]);
 
 // exports
 exports.locals = {
@@ -35770,7 +35852,10 @@ exports.locals = {
 	"username": "messages__username__2IXma",
 	"date": "messages__date__kiPHA",
 	"buttons": "messages__buttons__3szxG",
-	"icon": "messages__icon__2SEjV"
+	"icon": "messages__icon__2SEjV",
+	"num": "messages__num__3UaNI",
+	"rtGreen": "messages__rtGreen__39VQI",
+	"favYellow": "messages__favYellow__1XpjW"
 };
 
 /***/ }),

@@ -47,13 +47,13 @@ class Message extends Component{
                         <span className="fa fa-reply"></span> 
                     </div>
                     <div 
-                        className={(this.state.pressFavorite)? styles.rtGreen : ''} 
+                        className={(this.state.pressRetweet)? styles.rtGreen : ''} 
                         onClick={this.onPressRetweet}>
                         <span className="fa fa-retweet"></span>
                         <span className={styles.num}>{this.props.numRetweets}</span>
                     </div>
                     <div 
-                        className={(this.state.pressRetweet)? styles.favYellow : ''} 
+                        className={(this.state.pressFavorite)? styles.favYellow : ''} 
                         onClick={this.onPressFavorite}>
                         <span className="fa fa-star"></span>
                         <span className={styles.num}>{this.props.numFavorites}</span>
